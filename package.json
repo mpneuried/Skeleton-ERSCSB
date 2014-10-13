@@ -1,5 +1,5 @@
 {
-  "name": "Skeleton-ERSSB",
+  "name": "Skeleton-ERSCSB",
   "version": "0.0.1",
   "description": "Application skeleton with Express 4, Redis, Swig, Stylus and Bootstrap",
   "main": "server.js",

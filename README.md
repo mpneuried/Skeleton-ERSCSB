@@ -1,7 +1,7 @@
 Skeleton-ERSSB
 ============
 
-Application skeleton with Express 4, Redis, Swig, Stylus and Bootstrap
+Application skeleton with Express 4, Redis, Swig, CoffeeScript, Stylus and Bootstrap
 
 ### Open Features to 1.0
 [  ] Sessions

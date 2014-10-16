@@ -77,6 +77,12 @@ module.exports = (grunt) ->
 				files:
 					"static/css/style.css": ["_src_static/css/style.styl"]
 
+		swig_compile:
+			options: {}
+			all:
+				files:
+					'static/js/tmpls.js': ['_src_static/swig/*.swig']
+
 		copy:
 			static:
 				expand: true
@@ -207,6 +213,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-regarde"
 	grunt.loadNpmTasks "grunt-contrib-coffee"
 	grunt.loadNpmTasks "grunt-contrib-stylus"
+	grunt.loadNpmTasks "grunt-swig-compile"
 	grunt.loadNpmTasks "grunt-contrib-copy"
 	grunt.loadNpmTasks "grunt-contrib-compress"
 	grunt.loadNpmTasks "grunt-contrib-concat"

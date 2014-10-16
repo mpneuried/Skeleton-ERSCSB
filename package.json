@@ -33,6 +33,7 @@
     "grunt-contrib-uglify": "*",
     "grunt-contrib-cssmin": "*",
     "grunt-contrib-clean": "*",
+    "grunt-swig-compile": "0.1.x",
     "grunt-contrib-concat": "*",
     "grunt-ssh": "*"
   }

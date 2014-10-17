@@ -57,4 +57,4 @@ class RedisConnector extends require( "mpbasic" )( config )
 			_key += ":#{id}"
 		return _key
 
-module.exports = new RedisConnector()
+module.exports = RedisConnector

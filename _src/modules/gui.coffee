@@ -17,7 +17,7 @@ class GUI extends require( "../lib/apibase" )
 	index: (req, res)=>
 		_tmpl = 
 			title: config.get( "server" ).title
-		console.log _tmpl
+		
 		res.render('index', _tmpl )
 		return
 

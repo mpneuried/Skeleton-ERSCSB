@@ -20,7 +20,8 @@
     "extend": "1.2.x",
     "node-cache": "1.x",
     "redis": "0.12.x",
-    "hiredis": "0.1.x"
+    "hiredis": "0.1.x",
+    "bluebird": "2.3.x"
   },
   "devDependencies": {
     "grunt": "0.4.x",

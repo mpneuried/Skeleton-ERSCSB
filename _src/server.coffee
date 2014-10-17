@@ -106,14 +106,6 @@ class Server extends require( "mpbasic" )( Config )
 		res.send( "Page not found!" )
 
 		return
-
-	defaults: =>
-		@extend super,
-			port: 8400,
-			host: "localhost"
-			listenHost: null
-			basepath: "/"
-			title: "RSMQ Monitor"
 	
 module.exports = new Server()
 

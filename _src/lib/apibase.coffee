@@ -13,6 +13,7 @@ module.exports = class APIBase extends require( "mpbasic" )( config )
 		return
 
 	_checkAuth: ( req, res, next )=>
+		# this is just a placeholder
 		next()
 		return
 

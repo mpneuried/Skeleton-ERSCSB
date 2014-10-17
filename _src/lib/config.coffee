@@ -13,6 +13,12 @@ DEFAULT =
 		logger: "dev"
 		staticCacheTime: 1000 * 60 * 60 * 24 * 31
 
+	redis:
+		host: "localhost"
+		port: 6379
+		options: {}
+		client: null
+		prefix: ""
 
 # load the local config if the file exists
 try

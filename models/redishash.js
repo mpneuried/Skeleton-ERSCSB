@@ -21,7 +21,7 @@
       this._return = __bind(this._return, this);
       this._delete = __bind(this._delete, this);
       this._update = __bind(this._update, this);
-      this._insert = __bind(this._insert, this);
+      this._create = __bind(this._create, this);
       this._list = __bind(this._list, this);
       this._get = __bind(this._get, this);
       this.initialize = __bind(this.initialize, this);
@@ -38,7 +38,7 @@
       }
       this.get = this._waitUntil(this._get, "connected");
       this.list = this._waitUntil(this._list, "connected");
-      this.insert = this._waitUntil(this._insert, "connected");
+      this.create = this._waitUntil(this._create, "connected");
       this.update = this._waitUntil(this._update, "connected");
       this["delete"] = this._waitUntil(this._delete, "connected");
       this.connect();
@@ -61,10 +61,11 @@
       if (options == null) {
         options = {};
       }
+      this.debug("list", this._getKey(this.groupname));
       this.redis.hgetall(this._getKey(this.groupname), this._return(cb, options));
     };
 
-    RedisHash.prototype._insert = function() {
+    RedisHash.prototype._create = function() {
       var args, body, cb, options, _i, _id, _sBody;
       args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), cb = arguments[_i++];
       body = args[0], options = args[1];
@@ -73,6 +74,7 @@
       }
       _sBody = this._stringifyBody(body, options);
       _id = this._generateID(_sBody);
+      this.debug("create", _id, _sBody);
       this.redis.hset(this._getKey(this.groupname), _id, _sBody, this._return(cb, options));
     };
 
@@ -128,9 +130,11 @@
             cb(err);
             return;
           }
-          if (errorOnEmpty && (typeof current === "undefined" || current === null)) {
+          if (errorOnEmpty && (data == null)) {
             _this._handleError(cb, "ENOTFOUND");
             return;
+          } else if (data == null) {
+            data = [];
           }
           cb(null, _this._postProcess(data, options));
         };
@@ -139,6 +143,7 @@
 
     RedisHash.prototype._postProcess = function(data, options) {
       var el, _i, _len, _ret;
+      this.debug("_postProcess", data, options);
       if (_.isArray(data)) {
         _ret = [];
         for (_i = 0, _len = data.length; _i < _len; _i++) {
@@ -179,6 +184,6 @@
 
   })(require("../lib/redisconnector"));
 
-  moduel.exports = RedisHash;
+  module.exports = RedisHash;
 
 }).call(this);

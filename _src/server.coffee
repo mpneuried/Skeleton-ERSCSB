@@ -34,7 +34,7 @@ class Server extends require( "mpbasic" )( Config )
 		@on "configured", @load
 		@on "loaded", @start
 
-		@rest = {}
+		@todos = {}
 
 		@configure()
 
@@ -64,13 +64,13 @@ class Server extends require( "mpbasic" )( Config )
 
 		# load rest modules 
 		
-		@rest = require( "./modules/rest" )
+		@todos = require( "./modules/todos" )
 		@gui = require( "./modules/gui" )
 	
 		@express.get "/ping", @ping
 		@express.get "/ping.html", @ping
 
-		@rest.createRoutes( "/api/", @express )
+		@todos.createRoutes( "/api/todos", @express )
 		@gui.createRoutes( "/", @express )
 
 		# init 404 route

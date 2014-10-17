@@ -1,3 +1,5 @@
+redis = require( "redis" )
+
 config = require( "../lib/config" )
 
 globalclient = null
@@ -11,14 +13,13 @@ class RedisConnector extends require( "mpbasic" )( config )
 	constructor: ->
 		super
 		# just a simulation to globaly handle server powered stores
-		@configRedis = config.get( "redis" )
 		@connected = false
 		return
 
 	connect: =>
-
-		if @configRedis.redis?.constructor?.name is "RedisClient"
-			@redis = @configRedis.redis
+		@configRedis = config.get( "redis" )
+		if @configRedis.client?.constructor?.name is "RedisClient"
+			@redis = @configRedis.client
 		else if globalclient and not @configRedis.seperateClient
 			@redis = globalclient?.constructor?.name is "RedisClient"
 		else
@@ -36,6 +37,7 @@ class RedisConnector extends require( "mpbasic" )( config )
 
 		@redis.on "connect", =>
 			@connected = true
+			@debug "connected"
 			@emit( "connected" )
 			return
 

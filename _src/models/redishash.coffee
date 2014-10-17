@@ -13,7 +13,7 @@ class RedisHash extends require( "../lib/redisconnector" )
 		# wrappers to wait until redis is ready
 		@get = @_waitUntil( @_get, "connected" )
 		@list = @_waitUntil( @_list, "connected" )
-		@insert = @_waitUntil( @_insert, "connected" )
+		@create = @_waitUntil( @_create, "connected" )
 		@update = @_waitUntil( @_update, "connected" )
 		@delete = @_waitUntil( @_delete, "connected" )
 
@@ -31,17 +31,18 @@ class RedisHash extends require( "../lib/redisconnector" )
 		[ options ] = args
 		if not options?
 			options = {}
+		@debug "list", @_getKey( @groupname )
 		@redis.hgetall( @_getKey( @groupname ), @_return( cb, options ) )
 		return
 
-	_insert: ( args..., cb )=>
+	_create: ( args..., cb )=>
 		[ body, options ] = args
 		if not options?
 			options = {}
 		
 		_sBody= @_stringifyBody( body, options )
 		_id = @_generateID( _sBody )
-
+		@debug "create", _id, _sBody
 		@redis.hset( @_getKey( @groupname ), _id, _sBody, @_return( cb, options ) )
 		return
 
@@ -84,14 +85,18 @@ class RedisHash extends require( "../lib/redisconnector" )
 				cb( err )
 				return
 
-			if errorOnEmpty and not current?
+			if errorOnEmpty and not data?
 				@_handleError( cb, "ENOTFOUND" )
 				return
+			else if not data?
+				data = []
+
 
 			cb( null, @_postProcess( data, options ) )
 			return
 
 	_postProcess: ( data, options )=>
+		@debug "_postProcess", data, options
 		if _.isArray( data )
 			_ret = []
 			for el in data
@@ -111,11 +116,12 @@ class RedisHash extends require( "../lib/redisconnector" )
 
 	_generateID: ( sBody )=>
 		ts = Date.now()
-		ts
+		# TODO add hash
+		return ts
 			
 	ERRORS: =>
 		return @extend {}, super, 
 			"ENOGROUPNAME": [ 500, "A `this.groupname` key as string is required" ]
 			"ENOTFOUND": [ 404, "Element of `#{ @groupname }` not found" ]
 
-moduel.exports = RedisHash
+module.exports = RedisHash

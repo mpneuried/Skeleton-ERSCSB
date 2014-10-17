@@ -18,7 +18,7 @@ DEFAULT =
 		port: 6379
 		options: {}
 		client: null
-		prefix: ""
+		prefix: "todo"
 
 # load the local config if the file exists
 try
@@ -37,7 +37,10 @@ class Config
 		return
 
 	init: ( input )=>
-		@config = extend( true, {}, DEFAULT, _localconf, input )
+		if @config?
+			@config = extend( true, @config, input, { version: PackageJSON.version } )
+		else
+			@config = extend( true, {}, DEFAULT, _localconf, input, { version: PackageJSON.version } )
 		@_inited = true
 		return
 

@@ -62,10 +62,7 @@ module.exports = class APIBase extends require( "mpbasic" )( config )
 			res.status( statusCode ).send( data )
 		else
 			# convert to the silly media api v1 format format
-			if _.isArray( data )
-				res.status( statusCode ).json( rows: data )
-			else
-				res.status( statusCode ).json( rows: [data] )
+			res.status( statusCode ).json( data )
 		return
 
 	###

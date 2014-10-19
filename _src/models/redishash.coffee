@@ -24,7 +24,7 @@ class RedisHash extends require( "../lib/redisconnector" )
 		[ _id, options ] = args
 		if not options?
 			options = {}
-		@redis.hget( @_getKey( @groupname ), _id, @_return( cb, true, options ) )
+		@redis.hget( @_getKey( @groupname ), _id, @_return( "get", cb, _id, true, options ) )
 		return
 
 	_list: ( args..., cb )=>
@@ -32,7 +32,7 @@ class RedisHash extends require( "../lib/redisconnector" )
 		if not options?
 			options = {}
 		@debug "list", @_getKey( @groupname )
-		@redis.hgetall( @_getKey( @groupname ), @_return( cb, options ) )
+		@redis.hgetall( @_getKey( @groupname ), @_return( "list", cb, options ) )
 		return
 
 	_create: ( args..., cb )=>
@@ -42,8 +42,11 @@ class RedisHash extends require( "../lib/redisconnector" )
 		
 		_sBody= @_stringifyBody( body, options )
 		_id = @_generateID( _sBody )
-		@debug "create", _id, _sBody
-		@redis.hset( @_getKey( @groupname ), _id, _sBody, @_return( cb, options ) )
+
+		rM = []
+		rM.push [ "HSET",  @_getKey( @groupname ), _id, _sBody ]
+		rM.push [ "HGET",  @_getKey( @groupname ), _id ]
+		@redis.multi( rM ).exec( @_return( "create", cb, _id, options ) )
 		return
 
 	_update: ( args..., cb )=>
@@ -61,7 +64,10 @@ class RedisHash extends require( "../lib/redisconnector" )
 			else
 				_sBody= @_stringifyBody( body, options )
 			
-			@redis.hset( @_getKey( @groupname ), _id, _sBody, @_return( cb, options ) )
+			rM = []
+			rM.push [ "HSET",  @_getKey( @groupname ), _id, _sBody ]
+			rM.push [ "HGET",  @_getKey( @groupname ), _id ]
+			@redis.multi( rM ).exec( @_return( "update", cb, _id, options ) )
 			return
 		return
 
@@ -74,16 +80,27 @@ class RedisHash extends require( "../lib/redisconnector" )
 			if err
 				cb( err )
 				return
-			@redis.hdel( @_getKey( @groupname ), _id, @_return( cb, options ) )
+			
+			rM = []
+			rM.push [ "HGET",  @_getKey( @groupname ), _id ]
+			rM.push [ "HDEL",  @_getKey( @groupname ), _id ]
+			@redis.multi( rM ).exec( @_return( "delete", cb, _id, options ) )
 			return
 		return
 
-	_return: ( cb, args... , options )=>
-		[ errorOnEmpty ] = args
-		return ( err, data )=>
+	_return: ( type, cb, args... , options )=>
+		[ _id, errorOnEmpty ] = args
+		return ( err, results )=>
 			if err
 				cb( err )
 				return
+
+			if _.isArray( results )
+				[ pre..., data ] = results
+				if type is "delete"
+					data = pre[ 0 ]
+			else
+				data = results
 
 			if errorOnEmpty and not data?
 				@_handleError( cb, "ENOTFOUND" )
@@ -92,21 +109,24 @@ class RedisHash extends require( "../lib/redisconnector" )
 				data = []
 
 
-			cb( null, @_postProcess( data, options ) )
+			cb( null, @_postProcess( data, _id, options ) )
 			return
 
-	_postProcess: ( data, options )=>
+	_postProcess: ( args..., options )=>
+		[ data, key ] = args
 		@debug "_postProcess", data, options
-		if _.isArray( data )
+		if _.isObject( data )
 			_ret = []
-			for el in data
-				_ret.push @_postProcess( el, options )
+			for key, el of data
+				_ret.push @_postProcess( el, key, options )
 			return _ret
 
-		return @_postProcessElement( data, options )
+		return @_postProcessElement( data, key, options )
 
-	_postProcessElement: ( data, options )=>
-		return JSON.parse( data )
+	_postProcessElement: ( data, key, options )=>
+		_data = JSON.parse( data )
+		_data._id = key
+		return _data
 
 	_stringifyBody: ( body, options )=>
 		if _.isString( body )

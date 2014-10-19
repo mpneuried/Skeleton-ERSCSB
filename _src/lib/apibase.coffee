@@ -87,7 +87,7 @@ module.exports = class APIBase extends require( "mpbasic" )( config )
 
 		#if @_checkLogging( "debug" )
 		if @config.logHttpErrors
-			@error "HTTP ERROR", JSON.stringify( err ), "\n", err.stack
+			@error "HTTP ERROR", JSON.stringify( err ), "\n"
 
 		if _.isString( err )
 			if @_ERRORS[ err ]? and ( [ statusCode, msg ] = @_ERRORS[ err ] )

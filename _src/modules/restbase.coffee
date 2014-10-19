@@ -27,14 +27,14 @@ class RestBase extends require( "../lib/apibase" )
 
 		_id = req.params.id
 		_body = req.body
-		@model.get( _id, _body, @_return( res ) )
+		@model.update( _id, _body, @_return( res ) )
 		return
 
 	delete: ( req, res )=>
 		return if @_checkModel( res )
 
 		_id = req.params.id
-		@model.del( _id, @_return( res ) )
+		@model.delete( _id, @_return( res ) )
 		return
 
 	create: ( req, res )=>

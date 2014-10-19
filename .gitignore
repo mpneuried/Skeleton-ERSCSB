@@ -3,6 +3,7 @@
 *.conflict
 *.DS_Store
 *.zip
+*.rdb
 
 .project
 .settings
@@ -10,6 +11,7 @@
 
 /node_modules
 /modules
+/models
 /lib
 /static
 *.sublime*
